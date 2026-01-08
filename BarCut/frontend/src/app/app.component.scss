@@ -1,0 +1,15 @@
+.container-width {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+#visualization-container {
+  background-color: white !important;
+  min-width: 800px;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
