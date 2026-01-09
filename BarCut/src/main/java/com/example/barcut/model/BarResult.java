@@ -11,4 +11,5 @@ public class BarResult {
     private int totalLength;
     private List<Integer> cuts;
     private int waste;
+    private int stockReturn;
 }

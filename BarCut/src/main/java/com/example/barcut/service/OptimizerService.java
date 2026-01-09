@@ -18,7 +18,7 @@ public class OptimizerService {
 
         for (Integer cut : sortedCuts) {
             if (cut > stockLength) {
-                throw new IllegalArgumentException("Cięcie " + cut + "mm jest dłuższe niż wybrany pręt (" + stockLength + "mm)!");
+                throw new IllegalArgumentException("Cięcie " + cut + "mm jest dłuższe niż pręt (" + stockLength + "mm)!");
             }
 
             boolean placed = false;
@@ -48,9 +48,27 @@ public class OptimizerService {
         }
 
         List<BarResult> results = new ArrayList<>();
+
         for (BarWorkspace bw : openBars) {
-            results.add(new BarResult(bw.totalLength, bw.cuts, bw.currentSpace));
+            int usedSpace = bw.totalLength - bw.currentSpace;
+            int finalLength = bw.totalLength;
+            int stockReturn = 0;
+
+            if (bw.totalLength == 6000 && usedSpace <= 3000) {
+                finalLength = 3000;
+                stockReturn = 3000;
+
+                bw.currentSpace = finalLength - usedSpace;
+            }
+            else if (bw.totalLength == 12000 && usedSpace <= 6000) {
+                finalLength = 6000;
+                stockReturn = 6000;
+                bw.currentSpace = finalLength - usedSpace;
+            }
+
+            results.add(new BarResult(finalLength, bw.cuts, bw.currentSpace, stockReturn));
         }
+
         return results;
     }
 

@@ -21,7 +21,7 @@ public class BarCutApplication implements CommandLineRunner {
     @EventListener(ApplicationReadyEvent.class)
     public void openBrowser() {
         try {
-            String url = "http://localhost:8080";
+            String url = "http://localhost:49080";
             if (Desktop.isDesktopSupported()) {
                 Desktop.getDesktop().browse(new URI(url));
             } else {
