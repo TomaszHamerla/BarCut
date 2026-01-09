@@ -5,13 +5,14 @@ import html2canvas from 'html2canvas';
 
 interface CutInput {
   value: number | null;
-  count: number; // Nowe pole: Ilość sztuk
+  count: number;
 }
 
 interface BarResult {
   totalLength: number;
   cuts: number[];
   waste: number;
+  stockReturn: number;
 }
 
 @Component({
@@ -22,7 +23,6 @@ interface BarResult {
 export class AppComponent {
   currentYear = new Date().getFullYear();
 
-  // Konfiguracja
   selectedStockLength: number = 6000;
   selectedUnit: string = 'mm';
 
@@ -37,7 +37,6 @@ export class AppComponent {
     { label: 'Metry (m)', value: 'm' }
   ];
 
-  // Domyślnie 1 sztuka
   cutList: CutInput[] = [{ value: null, count: 1 }];
   optimizationResults: BarResult[] = [];
   isCalculating = false;
@@ -45,11 +44,9 @@ export class AppComponent {
 
   constructor(private http: HttpClient) {}
 
-  // --- AKCJE ---
 
   addKey() {
     this.cutList.push({ value: null, count: 1 });
-    // Focus na nowym polu (długości)
     setTimeout(() => {
       const inputs = document.querySelectorAll('.cut-input-value');
       const lastInput = inputs[inputs.length - 1] as HTMLInputElement;
@@ -61,7 +58,6 @@ export class AppComponent {
     this.cutList.splice(index, 1);
   }
 
-  // NOWE: Resetowanie formularza
   resetData() {
     if (confirm('Czy na pewno chcesz wyczyścić wszystkie dane?')) {
       this.cutList = [{ value: null, count: 1 }];
@@ -74,12 +70,10 @@ export class AppComponent {
     event.target.select();
   }
 
-  // --- OBLICZENIA ---
-
   calculate() {
     this.isCalculating = true;
     this.errorMessage = '';
-    this.optimizationResults = []; // Czyścimy poprzednie wyniki
+    this.optimizationResults = [];
 
     const multiplier = this.getMultiplierToMm();
     const cutsInMm: number[] = [];
@@ -117,6 +111,20 @@ export class AppComponent {
       });
   }
 
+  getNetUsage(): number {
+    let totalUsage = 0;
+
+    for (const bar of this.optimizationResults) {
+      const physicalBarLength = bar.totalLength + bar.stockReturn;
+
+      const fraction = bar.totalLength / physicalBarLength;
+
+      totalUsage += fraction;
+    }
+
+    return totalUsage;
+  }
+
   getMultiplierToMm(): number {
     if (this.selectedUnit === 'cm') return 10;
     if (this.selectedUnit === 'm') return 1000;
@@ -139,13 +147,26 @@ export class AppComponent {
     if (!data) return;
 
     html2canvas(data, { scale: 2 }).then(canvas => {
-      const imgWidth = 190;
-      const imgHeight = canvas.height * imgWidth / canvas.width;
       const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const pageHeight = 297;
 
-      pdf.text('Raport Ciecia', 10, 10);
-      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 20, imgWidth, imgHeight);
-      pdf.save('raport_ciecia.pdf');
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = position - pageHeight;
+        pdf.addPage();
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save('plan_cięcia.pdf');
     });
   }
 }

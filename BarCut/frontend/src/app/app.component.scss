@@ -5,7 +5,8 @@
 
 #visualization-container {
   background-color: white !important;
-  min-width: 800px;
+  height: auto;
+  overflow: visible;
 }
 
 input[type=number]::-webkit-inner-spin-button,

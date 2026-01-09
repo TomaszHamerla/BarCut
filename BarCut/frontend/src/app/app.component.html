@@ -7,11 +7,13 @@
         <div class="flex gap-4 flex-wrap">
           <div class="flex flex-column gap-2 flex-1">
             <label class="font-bold">Długość sztangi (baza):</label>
-            <p-dropdown [options]="stockOptions" [(ngModel)]="selectedStockLength" optionLabel="label" optionValue="value" [style]="{'width':'100%'}"></p-dropdown>
+            <p-dropdown [options]="stockOptions" [(ngModel)]="selectedStockLength" optionLabel="label"
+                        optionValue="value" [style]="{'width':'100%'}"></p-dropdown>
           </div>
           <div class="flex flex-column gap-2 flex-1">
             <label class="font-bold">Jednostka miary:</label>
-            <p-dropdown [options]="unitOptions" [(ngModel)]="selectedUnit" optionLabel="label" optionValue="value" [style]="{'width':'100%'}"></p-dropdown>
+            <p-dropdown [options]="unitOptions" [(ngModel)]="selectedUnit" optionLabel="label" optionValue="value"
+                        [style]="{'width':'100%'}"></p-dropdown>
           </div>
         </div>
       </p-panel>
@@ -19,7 +21,6 @@
 
     <div class="col-12">
       <p-panel header="Lista Odcinków (wpisuj w {{selectedUnit}})">
-
         <div class="flex gap-2 mb-2 px-1 text-500 text-sm font-bold">
           <div class="w-2rem text-right">#</div>
           <div class="w-4rem text-center">Ilość</div>
@@ -29,40 +30,29 @@
 
         <div *ngFor="let item of cutList; let i = index" class="field-row mb-2 fadein animation-duration-300">
           <div class="flex align-items-center gap-2">
-            <span class="font-bold w-2rem text-right">{{i+1}}</span>
-
-            <input pInputText type="number"
-                   [(ngModel)]="item.count"
-                   class="w-4rem text-center font-bold"
-                   min="1"
+            <span class="font-bold w-2rem text-right">{{i + 1}}</span>
+            <input pInputText type="number" [(ngModel)]="item.count" class="w-4rem text-center font-bold" min="1"
                    (focus)="selectAllContent($event)">
-
-            <span class="font-bold">x</span>
-
-            <input pInputText type="number"
-                   [(ngModel)]="item.value"
-                   class="flex-1 cut-input-value"
-                   placeholder="Wymiar"
-                   (focus)="selectAllContent($event)"
-                   (keydown.enter)="addKey()">
-
-            <button pButton icon="pi pi-trash" class="p-button-danger p-button-text"
-                    tabindex="-1" (click)="removeKey(i)"></button>
+            <span class="font-bold text-500">x</span>
+            <input pInputText type="number" [(ngModel)]="item.value" class="flex-1 cut-input-value" placeholder="Wymiar"
+                   (focus)="selectAllContent($event)" (keydown.enter)="addKey()">
+            <button pButton icon="pi pi-trash" class="p-button-danger p-button-text" tabindex="-1"
+                    (click)="removeKey(i)"></button>
           </div>
         </div>
 
         <div class="flex justify-content-between flex-wrap gap-2 mt-4 border-top-1 border-200 pt-3">
-          <button pButton label="Dodaj kolejny (Enter)" icon="pi pi-plus" class="p-button-outlined" (click)="addKey()"></button>
-
+          <button pButton label="Dodaj kolejny (Enter)" icon="pi pi-plus" class="p-button-outlined"
+                  (click)="addKey()"></button>
           <div class="flex gap-2">
-            <button pButton label="Wyczyść" icon="pi pi-refresh" class="p-button-secondary p-button-outlined" (click)="resetData()"></button>
-
-            <button pButton label="OBLICZ" icon="pi pi-cog" class="p-button-success font-bold"
-                    (click)="calculate()" [loading]="isCalculating"></button>
+            <button pButton label="Wyczyść" icon="pi pi-refresh" class="p-button-secondary p-button-outlined"
+                    (click)="resetData()"></button>
+            <button pButton label="OBLICZ" icon="pi pi-cog" class="p-button-success font-bold" (click)="calculate()"
+                    [loading]="isCalculating"></button>
           </div>
         </div>
 
-        <div *ngIf="errorMessage" style="color: red!important;" class="mt-3 text-red-500 font-bold p-3 surface-100 border-round">
+        <div *ngIf="errorMessage" class="mt-3 text-red-500 font-bold p-3 surface-100 border-round">
           <i class="pi pi-exclamation-triangle mr-2"></i>{{errorMessage}}
         </div>
       </p-panel>
@@ -70,39 +60,74 @@
   </div>
 
   <div *ngIf="optimizationResults.length > 0" class="mt-5 fadein animation-duration-500">
-    <div class="flex justify-content-between align-items-center mb-3">
-      <h3 class="m-0">Wynik: Potrzebujesz {{optimizationResults.length}} szt.</h3>
+    <div class="flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <div>
+        <h3 class="m-0">Wynik: Potrzebujesz {{getNetUsage() | number:'1.0-2'}} szt.</h3>
+      </div>
+
       <button pButton label="Pobierz Raport PDF" icon="pi pi-file-pdf" class="p-button-warning" (click)="generatePDF()"></button>
     </div>
 
     <div id="visualization-container" class="p-4 bg-white shadow-2 border-round">
-      <div class="text-center font-bold text-xl mb-4">Plan Rozkroju (Jednostka: {{selectedUnit}})</div>
+      <div class="text-center font-bold text-xl mb-5">Plan Rozkroju (Jednostka: {{selectedUnit}})</div>
 
-      <div *ngFor="let bar of optimizationResults; let i = index" class="mb-5">
-        <div class="text-900 font-bold mb-1 text-sm">
-          Sztanga #{{i+1}} ({{formatLength(bar.totalLength)}})
+      <div *ngFor="let bar of optimizationResults; let i = index" class="mb-6 border-bottom-1 border-300 pb-4">
+
+        <div class="flex justify-content-between mb-1 align-items-end">
+            <span class="text-900 font-bold text-sm">Sztanga #{{i + 1}}
+              <span *ngIf="bar.stockReturn > 0"
+                    class="text-500 font-normal">(Użyto połówki z {{formatLength(bar.totalLength + bar.stockReturn)}}
+                )</span>
+                <span *ngIf="bar.stockReturn === 0">({{formatLength(bar.totalLength)}})</span>
+            </span>
+          <span *ngIf="bar.stockReturn > 0" class="text-green-600 font-bold text-sm">
+                <i class="pi pi-arrow-left text-xs mr-1"></i> Zostaje na stanie: {{formatLength(bar.stockReturn)}}
+            </span>
         </div>
 
-        <div class="flex w-full h-4rem border-2 border-900 surface-200 overflow-hidden relative border-round"
+        <div class="flex w-full h-4rem border-2 border-900 surface-200 overflow-hidden relative border-round mb-2"
              style="background-color: #e5e7eb;">
-
           <div *ngFor="let cut of bar.cuts"
                class="flex align-items-center justify-content-center text-white text-xs border-right-1 border-white overflow-hidden"
-               [style.width.%]="getPercentage(cut, bar.totalLength)"
+               [style.width.%]="getPercentage(cut, bar.totalLength + bar.stockReturn)"
                style="background-color: #2563eb !important;">
-            <span class="font-bold" style="white-space: nowrap;">{{formatLength(cut)}}</span>
+            <span *ngIf="getPercentage(cut, bar.totalLength + bar.stockReturn) > 6" class="font-bold"
+                  style="white-space: nowrap;">{{formatLength(cut)}}</span>
           </div>
-
           <div *ngIf="bar.waste > 0"
                class="flex align-items-center justify-content-center text-white text-xs font-bold overflow-hidden"
-               [style.width.%]="getPercentage(bar.waste, bar.totalLength)"
+               [style.width.%]="getPercentage(bar.waste, bar.totalLength + bar.stockReturn)"
                style="background-color: #dc2626 !important; background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.2) 5px, rgba(255,255,255,0.2) 10px);">
-            <span style="white-space: nowrap;">{{formatLength(bar.waste)}}</span>
+            <span *ngIf="getPercentage(bar.waste, bar.totalLength + bar.stockReturn) > 6"
+                  style="white-space: nowrap;">{{formatLength(bar.waste)}} (Odp)</span>
+          </div>
+          <div *ngIf="bar.stockReturn > 0"
+               class="flex align-items-center justify-content-center text-white text-xs font-bold overflow-hidden border-left-2 border-900"
+               [style.width.%]="getPercentage(bar.stockReturn, bar.totalLength + bar.stockReturn)"
+               style="background-color: #16a34a !important;">
+            <span *ngIf="getPercentage(bar.stockReturn, bar.totalLength + bar.stockReturn) > 8"
+                  style="white-space: nowrap;">MAGAZYN: {{formatLength(bar.stockReturn)}}</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-4 text-sm align-items-center bg-gray-50 p-2 border-round">
+          <div class="flex align-items-center">
+            <span class="font-bold text-700 mr-2">Cięcia:</span>
+            <span class="text-900"><span *ngFor="let c of bar.cuts; let last = last">{{formatLength(c)}}<span
+              *ngIf="!last">, </span></span></span>
+          </div>
+          <div *ngIf="bar.waste > 0" class="flex align-items-center text-red-600">
+            <i class="pi pi-trash mr-1"></i><span
+            class="font-bold mr-1">Odpad:</span><span>{{formatLength(bar.waste)}}</span>
+          </div>
+          <div *ngIf="bar.stockReturn > 0" class="flex align-items-center text-green-600">
+            <i class="pi pi-box mr-1"></i><span
+            class="font-bold mr-1">Magazyn:</span><span>{{formatLength(bar.stockReturn)}}</span>
           </div>
         </div>
       </div>
 
-      <div class="flex justify-content-between mt-5 border-top-1 border-300 pt-2">
+      <div class="flex justify-content-between mt-6 border-top-1 border-300 pt-2">
         <div class="text-500 text-sm">Wygenerowano automatycznie</div>
       </div>
     </div>
@@ -110,6 +135,6 @@
 
   <footer class="mt-8 mb-4 text-center text-500 text-sm">
     <p>&copy; {{ currentYear }} Optymalizator Cięcia.</p>
-    <p class="font-bold">Made by Tomasz Hamerla</p>
+    <p style="font-size:small">Made by Tomasz Hamerla</p>
   </footer>
 </div>
