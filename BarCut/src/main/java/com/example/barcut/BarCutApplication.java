@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class BarCutApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
-        System.setProperty("java.awt.headless", "false");
+        //System.setProperty("java.awt.headless", "false");
         SpringApplication.run(BarCutApplication.class, args);
     }
 

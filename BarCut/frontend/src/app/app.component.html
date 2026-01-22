@@ -34,7 +34,7 @@
             <input pInputText type="number" [(ngModel)]="item.count" class="w-4rem text-center font-bold" min="1"
                    (focus)="selectAllContent($event)">
             <span class="font-bold text-500">x</span>
-            <input pInputText type="number" [(ngModel)]="item.value" class="flex-1 cut-input-value" placeholder="Wymiar"
+            <input pInputText style="width: 100%" type="number" [(ngModel)]="item.value" class="flex-1 cut-input-value" placeholder="Wymiar"
                    (focus)="selectAllContent($event)" (keydown.enter)="addKey()">
             <button pButton icon="pi pi-trash" class="p-button-danger p-button-text" tabindex="-1"
                     (click)="removeKey(i)"></button>
