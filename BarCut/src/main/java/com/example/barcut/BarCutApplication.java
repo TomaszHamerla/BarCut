@@ -14,23 +14,23 @@ import java.time.LocalDate;
 public class BarCutApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
-        System.setProperty("java.awt.headless", "false");
+        //System.setProperty("java.awt.headless", "false");
         SpringApplication.run(BarCutApplication.class, args);
     }
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void openBrowser() {
-        try {
-            String url = "http://localhost:49080";
-            if (Desktop.isDesktopSupported()) {
-                Desktop.getDesktop().browse(new URI(url));
-            } else {
-                Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    @EventListener(ApplicationReadyEvent.class)
+//    public void openBrowser() {
+//        try {
+//            String url = "http://localhost:49080";
+//            if (Desktop.isDesktopSupported()) {
+//                Desktop.getDesktop().browse(new URI(url));
+//            } else {
+//                Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public void run(String... args) throws Exception {
