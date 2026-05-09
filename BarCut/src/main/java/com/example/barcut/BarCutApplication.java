@@ -34,10 +34,10 @@ public class BarCutApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        LocalDate currentDate = LocalDate.now();
-        if (currentDate.isAfter(LocalDate.of(2026, 5, 1))) {
-            System.out.println("The application has expired and will now exit.");
-            System.exit(0);
-        }
+//        LocalDate currentDate = LocalDate.now();
+//        if (currentDate.isAfter(LocalDate.of(2026, 5, 1))) {
+//            System.out.println("The application has expired and will now exit.");
+//            System.exit(0);
+//        }
     }
 }
