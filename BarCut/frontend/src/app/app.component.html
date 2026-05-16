@@ -1,6 +1,4 @@
-<div class="container-width p-2">
-  <h2 class="text-center m-1 text-900">Optymalizator Cięcia Prętów</h2>
-
+<div class="container-width p-2 flex flex-column" style="min-height: 100vh;">
   <div class="grid">
     <div class="col-12">
       <p-accordion>
@@ -30,7 +28,7 @@
           <div class="w-2rem"></div>
         </div>
 
-        <div class="cut-list-container mb-1 pr-2" style="max-height: 250px; overflow-y: auto; overflow-x: hidden;">
+        <div class="cut-list-container mb-1 pr-2" style="max-height: 220px; overflow-y: auto; overflow-x: hidden;">
           <div *ngFor="let item of cutList; let i = index" class="field-row mb-1 fadein animation-duration-300">
             <div class="flex align-items-center gap-2">
               <span class="font-bold w-2rem text-right">{{i + 1}}</span>
@@ -45,7 +43,7 @@
           </div>
         </div>
 
-        <div class="flex justify-content-between flex-wrap gap-2 border-top-1 border-200 pt-3">
+        <div class="flex justify-content-between flex-wrap gap-2 border-top-1 border-200 pt-1">
           <button pButton label="Dodaj kolejny (Enter)" icon="pi pi-plus" class="p-button-outlined"
                   (click)="addKey()"></button>
           <div class="flex gap-2">
@@ -64,10 +62,12 @@
   </div>
 
   <div *ngIf="optimizationResults.length > 0" class="fadein animation-duration-500 text-center">
-    <p-panel header="Podsumowanie">
-      <h3 class="m-0 mb-1">Wynik: Potrzebujesz {{getNetUsage() | number:'1.0-2'}} szt.</h3>
-      <button pButton label="Pokaż wizualizację" icon="pi pi-eye" class="p-button-primary p-button-lg" (click)="showResultsDialog = true"></button>
-    </p-panel>
+    <p-accordion>
+      <p-accordionTab header="Podsumowanie">
+        <h3 class="m-0 mb-1">Wynik: Potrzebujesz {{getNetUsage() | number:'1.0-2'}} szt.</h3>
+        <button pButton label="Pokaż wizualizację" icon="pi pi-eye" class="p-button-primary p-button-lg" (click)="showResultsDialog = true"></button>
+      </p-accordionTab>
+    </p-accordion>
   </div>
 
   <p-dialog header="Wizualizacja Cięcia" [(visible)]="showResultsDialog" [modal]="true" [style]="{width: '90vw', maxWidth: '1200px'}" [draggable]="false" [resizable]="false">
@@ -137,13 +137,13 @@
         </div>
       </div>
 
-      <div class="flex justify-content-between mt-6 border-top-1 border-300 pt-2">
+      <div class="flex justify-content-between mt-6 border-top-1 border-300 pt-1">
         <div class="text-500 text-sm">Wygenerowano automatycznie</div>
       </div>
     </div>
   </p-dialog>
 
-  <footer class="text-center text-500 text-sm">
+  <footer class="text-center text-500 text-sm mt-auto pb-2">
     <p>&copy; {{ currentYear }} Optymalizator Cięcia.</p>
     <p style="font-size:small">Made by Tomasz Hamerla</p>
   </footer>
