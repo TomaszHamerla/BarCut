@@ -41,6 +41,7 @@ export class AppComponent {
   optimizationResults: BarResult[] = [];
   isCalculating = false;
   errorMessage = '';
+  showResultsDialog = false;
 
   constructor(private http: HttpClient) {}
 
@@ -51,6 +52,10 @@ export class AppComponent {
       const inputs = document.querySelectorAll('.cut-input-value');
       const lastInput = inputs[inputs.length - 1] as HTMLInputElement;
       if (lastInput) lastInput.focus();
+      const container = document.querySelector('.cut-list-container');
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
     }, 50);
   }
 
@@ -102,6 +107,7 @@ export class AppComponent {
         next: (data) => {
           this.optimizationResults = data;
           this.isCalculating = false;
+          this.showResultsDialog = true;
         },
         error: (err) => {
           console.error(err);
